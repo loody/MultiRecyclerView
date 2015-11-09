@@ -1,28 +1,26 @@
 package me.loody.multirecyclerview;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import me.loody.multirecyclerview.adapter.RecyclerViewFooterAdapterImpl;
+import me.loody.multirecyclerview.adapter.BaseFragmentPagerAdapter;
+import me.loody.multirecyclerview.fragment.ListFragment;
 
 public class MainActivity extends AppCompatActivity {
-    @Bind(R.id.multirecyclerview)
-    MultiRecyclerView mMultiRecyclerView;
-    RecyclerViewFooterAdapterImpl mAdapter;
-    private int mCount_insert = 0;
-    private int mCount_more = 0;
+    @Bind(R.id.viewpager)
+    ViewPager viewpager;
+    @Bind(R.id.tabs)
+    TabLayout tabs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,41 +38,15 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        mAdapter = new RecyclerViewFooterAdapterImpl(mMultiRecyclerView, getData());
-        mMultiRecyclerView.setOnLoadListener(new MultiRecyclerView.OnLoadListener() {
-            @Override
-            public void refresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.insertItem("insert " + (++mCount_insert));
-                        mMultiRecyclerView.setRefreshComplete();
-                    }
-                }, 1000);
-            }
-
-            @Override
-            public void loadMore() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.addItem("more " + (++mCount_more));
-                        mMultiRecyclerView.setRefreshComplete();
-                    }
-                }, 2000);
-            }
-        });
-        mMultiRecyclerView.setAdapter(mAdapter);
+        BaseFragmentPagerAdapter baseFragmentPagerAdapter = new BaseFragmentPagerAdapter(getSupportFragmentManager());
+        baseFragmentPagerAdapter.addFragment(ListFragment.newInstance(ListFragment.LAYOUT_MANAGER_TYPE.LINEAR.ordinal()), ListFragment.LAYOUT_MANAGER_TYPE.LINEAR.name());
+        baseFragmentPagerAdapter.addFragment(ListFragment.newInstance(ListFragment.LAYOUT_MANAGER_TYPE.GRID.ordinal()), ListFragment.LAYOUT_MANAGER_TYPE.GRID.name());
+        baseFragmentPagerAdapter.addFragment(ListFragment.newInstance(ListFragment.LAYOUT_MANAGER_TYPE.STAGGERED_GRID.ordinal()), ListFragment.LAYOUT_MANAGER_TYPE.STAGGERED_GRID.name());
+        viewpager.setAdapter(baseFragmentPagerAdapter);
+        viewpager.setOffscreenPageLimit(baseFragmentPagerAdapter.getCount());
+        tabs.setupWithViewPager(viewpager);
     }
 
-    private List<String> getData() {
-        List<String> strings = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            strings.add("test data " + i);
-        }
-        return strings;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,6 +1,7 @@
 package me.loody.multirecyclerview.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,17 +9,18 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import me.loody.multirecyclerview.MultiRecyclerView;
 import me.loody.multirecyclerview.R;
 
 /**
  * Created by mSobhy on 7/22/15.
  */
 public class RecyclerViewFooterAdapterImpl<T> extends AbstractRecyclerViewFooterAdapter<T> {
-    public RecyclerViewFooterAdapterImpl(MultiRecyclerView my_recyclerView, List<T> dataset) {
-        super(my_recyclerView.getRecyclerView(), dataset);
-    }
+    private RecyclerView mRecyclerView;
 
+    public RecyclerViewFooterAdapterImpl(RecyclerView recyclerView, List<T> dataset) {
+        super(recyclerView, dataset);
+        mRecyclerView = recyclerView;
+    }
 
     @Override
     public RecyclerView.ViewHolder onCreateBasicItemViewHolder(ViewGroup parent, int viewType) {
@@ -31,6 +33,19 @@ public class RecyclerViewFooterAdapterImpl<T> extends AbstractRecyclerViewFooter
     public void onBindBasicItemView(RecyclerView.ViewHolder genericHolder, int position) {
         final MyOwnHolder holder = (MyOwnHolder) genericHolder;
         holder.mTextView.setText(getItem(position).toString());
+        if (mRecyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+            if (position % 3 == 0) {
+                holder.mTextView.setPadding(0, 20, 0, 20);
+//            holder.mTextView.setBackgroundColor(Color.DKGRAY);
+            } else if (position % 3 == 1) {
+                holder.mTextView.setPadding(0, 80, 0, 80);
+//            holder.mTextView.setBackgroundColor(Color.CYAN);
+            } else if (position % 3 == 2) {
+                holder.mTextView.setPadding(0, 130, 0, 130);
+//            holder.mTextView.setBackgroundColor(Color.LTGRAY);
+
+            }
+        }
         // DO YOU BINDING MAGIC HERE
     }
 

@@ -18,10 +18,23 @@ import me.loody.multirecyclerview.adapter.RecyclerViewFooterAdapterImpl;
  */
 public class MultiRecyclerView extends FrameLayout implements AbstractRecyclerViewFooterAdapter.OnLoadMoreListener {
 
-
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeLayout;
     private boolean isRefreshing;
+
+    public void setItemAnimator(RecyclerView.ItemAnimator itemAnimator) {
+        mItemAnimator = itemAnimator;
+        mRecyclerView.setItemAnimator(mItemAnimator == null ? new DefaultItemAnimator() : mItemAnimator);
+    }
+
+    private RecyclerView.ItemAnimator mItemAnimator;
+
+    public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
+        mLayoutManager = layoutManager;
+        mRecyclerView.setLayoutManager(mLayoutManager == null ? new LinearLayoutManager(getContext()) : mLayoutManager);
+    }
+
+    private RecyclerView.LayoutManager mLayoutManager;
 
     public void setAdapter(RecyclerViewFooterAdapterImpl adapter) {
         mAdapter = adapter;
@@ -58,8 +71,8 @@ public class MultiRecyclerView extends FrameLayout implements AbstractRecyclerVi
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         addListener();
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setLayoutManager(mLayoutManager == null ? new LinearLayoutManager(getContext()) : mLayoutManager);
+        mRecyclerView.setItemAnimator(mItemAnimator == null ? new DefaultItemAnimator() : mItemAnimator);
     }
 
 

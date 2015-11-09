@@ -1,8 +1,10 @@
 package me.loody.multirecyclerview.adapter;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,37 +30,37 @@ public abstract class AbstractRecyclerViewFooterAdapter<T> extends RecyclerView.
 
     public AbstractRecyclerViewFooterAdapter(RecyclerView recyclerView, List<T> dataSet) {
         this.dataSet = dataSet;
-        if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
-            final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    totalItemCount = linearLayoutManager.getItemCount();
-                    visibleItemCount = linearLayoutManager.getChildCount();
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                totalItemCount = recyclerView.getLayoutManager().getItemCount();
+                visibleItemCount = recyclerView.getLayoutManager().getChildCount();
+                if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
+                    final LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
                     firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-                    if (!loadingMore && (totalItemCount - visibleItemCount)
-                            <= firstVisibleItem + VISIBLE_THRESHOLD) {
-                        // End has been reached
-                        loadingMore = true;
-                        addItem(null);
-                        if (mOnLoadMoreListener != null) {
-                            mOnLoadMoreListener.onLoadMore();
-                        }
+                } else if (recyclerView.getLayoutManager() instanceof GridLayoutManager) {
+                    GridLayoutManager gridLayoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+                    firstVisibleItem = gridLayoutManager.findFirstVisibleItemPosition();
+                } else if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) recyclerView.getLayoutManager();
+                    firstVisibleItem = staggeredGridLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1];
+                }
+                if (!loadingMore && (totalItemCount - visibleItemCount)
+                        <= firstVisibleItem + VISIBLE_THRESHOLD) {
+                    // End has been reached
+                    loadingMore = true;
+                    addItem(null);
+                    if (mOnLoadMoreListener != null) {
+                        mOnLoadMoreListener.onLoadMore();
                     }
                 }
-            });
-        }
+            }
+        });
     }
-
-    public int getFirstVisibleItem() {
-        return firstVisibleItem;
-    }
-
 
     public void setLoadingMore(boolean loadingMore) {
         this.loadingMore = loadingMore;
     }
-
 
     public void resetItems(@NonNull List<T> newDataSet) {
         loadingMore = false;
