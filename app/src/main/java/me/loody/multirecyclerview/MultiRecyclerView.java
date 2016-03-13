@@ -117,4 +117,14 @@ public class MultiRecyclerView extends FrameLayout implements AbstractRecyclerVi
          */
         void loadMore();
     }
+
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener OnItemClickListener) {
+        mOnItemClickListener = OnItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClickListener(int postion);
+    }
 }

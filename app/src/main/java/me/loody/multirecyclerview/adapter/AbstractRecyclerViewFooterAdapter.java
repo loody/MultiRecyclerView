@@ -1,3 +1,9 @@
+/*
+ *   Created by loody 3/13/16 8:56 PM .
+ *   Copyright (c) 2016 loody <loody128@gmail.com>.
+ *
+ */
+
 package me.loody.multirecyclerview.adapter;
 
 import android.support.annotation.NonNull;
@@ -16,9 +22,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import me.loody.multirecyclerview.R;
 
-/**
- * Created by mSobhy on 7/22/15.
- */
 public abstract class AbstractRecyclerViewFooterAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VISIBLE_THRESHOLD = 5;
@@ -172,4 +175,16 @@ public abstract class AbstractRecyclerViewFooterAdapter<T> extends RecyclerView.
     public interface OnLoadMoreListener {
         void onLoadMore();
     }
+
+    private OnItemClickListener mOnItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener OnItemClickListener) {
+        mOnItemClickListener = OnItemClickListener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClickListener(int postion);
+    }
+
+
 }
