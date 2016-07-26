@@ -31,8 +31,6 @@ public abstract class AbstractRecyclerViewFooterAdapter<T> extends RecyclerView.
     private int firstVisibleItem, visibleItemCount, totalItemCount = 0;
     private boolean loadingMore = false;
 
-     private boolean isUserScrolled = false;
-
     public AbstractRecyclerViewFooterAdapter(RecyclerView recyclerView, List<T> dataSet) {
         this.dataSet = dataSet;
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -50,7 +48,7 @@ public abstract class AbstractRecyclerViewFooterAdapter<T> extends RecyclerView.
                     StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) recyclerView.getLayoutManager();
                     firstVisibleItem = staggeredGridLayoutManager.findLastCompletelyVisibleItemPositions(new int[2])[1];
                 }
-                if (!loadingMore && isUserScrolled && (totalItemCount - visibleItemCount)
+                if (!loadingMore && (totalItemCount - visibleItemCount)
                         <= firstVisibleItem + VISIBLE_THRESHOLD) {
                     // End has been reached
                     loadingMore = true;
@@ -60,15 +58,6 @@ public abstract class AbstractRecyclerViewFooterAdapter<T> extends RecyclerView.
                     }
                 }
             }
-
-          @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                    isUserScrolled = true;
-                }
-                Log.i(TAG,"1onScrollStateChanged :" + totalItemCount);
-                super.onScrollStateChanged(recyclerView, newState);
-}
         });
     }
 
